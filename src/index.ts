@@ -11,6 +11,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import * as dotenv from 'dotenv';
 import { getAllTools, executeToolCall } from './tools.js';
@@ -62,6 +66,8 @@ async function createServer() {
     {
       capabilities: {
         tools: {},
+        resources: {},
+        prompts: {},
       },
     }
   );
@@ -107,6 +113,161 @@ async function createServer() {
         isError: true,
       };
     }
+  });
+
+  // Handle resource listing
+  server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    try {
+      await ensureAuthenticated();
+      return {
+        resources: [
+          {
+            uri: 'appsai://projects',
+            name: 'Projects',
+            description: 'List of your AppsAI projects',
+            mimeType: 'application/json',
+          },
+        ],
+      };
+    } catch {
+      return { resources: [] };
+    }
+  });
+
+  // Handle resource reading
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+    console.error(`[MCP] Resource read: ${uri}`);
+
+    try {
+      const userId = await ensureAuthenticated();
+
+      if (uri === 'appsai://projects') {
+        const result = await executeToolCall('project_LIST_PROJECTS', {}, userId);
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: result.content[0].type === 'text' ? result.content[0].text : '[]',
+            },
+          ],
+        };
+      }
+
+      // Handle appsai://project/{id}
+      const projectMatch = uri.match(/^appsai:\/\/project\/(.+)$/);
+      if (projectMatch) {
+        const projectId = projectMatch[1];
+        const result = await executeToolCall('project_GET_PROJECT_DETAILS', { projectId }, userId);
+        return {
+          contents: [
+            {
+              uri,
+              mimeType: 'application/json',
+              text: result.content[0].type === 'text' ? result.content[0].text : '{}',
+            },
+          ],
+        };
+      }
+
+      throw new Error(`Unknown resource: ${uri}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to read resource: ${message}`);
+    }
+  });
+
+  // Handle prompt listing
+  server.setRequestHandler(ListPromptsRequestSchema, async () => {
+    return {
+      prompts: [
+        {
+          name: 'create-component',
+          description: 'Generate a new React component with best practices',
+          arguments: [
+            { name: 'name', description: 'Component name', required: true },
+            { name: 'projectId', description: 'Target project ID', required: true },
+          ],
+        },
+        {
+          name: 'fix-error',
+          description: 'Debug and fix an error in your project',
+          arguments: [
+            { name: 'error', description: 'Error message or description', required: true },
+            { name: 'projectId', description: 'Target project ID', required: true },
+          ],
+        },
+        {
+          name: 'deploy',
+          description: 'Deploy your application to production',
+          arguments: [
+            { name: 'projectId', description: 'Project to deploy', required: true },
+            { name: 'target', description: 'Deploy target: frontend, backend, or all', required: false },
+          ],
+        },
+      ],
+    };
+  });
+
+  // Handle prompt retrieval
+  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+
+    const prompts: Record<string, { description: string; content: string }> = {
+      'create-component': {
+        description: 'Generate a new React component',
+        content: `Create a new React component named "${args?.name || 'Component'}" in project ${args?.projectId || 'unknown'}.
+
+Requirements:
+- Use TypeScript with proper types
+- Follow React best practices
+- Include proper exports
+- Add basic styling if appropriate
+
+Use the canvas_SET_RAW_FILE tool to create the component file.`,
+      },
+      'fix-error': {
+        description: 'Debug and fix an error',
+        content: `Fix the following error in project ${args?.projectId || 'unknown'}:
+
+Error: ${args?.error || 'No error provided'}
+
+Steps:
+1. Use canvas_LIST_FILES to find relevant files
+2. Use canvas_READ_RAW_FILE to examine the code
+3. Use canvas_SET_RAW_FILE to apply the fix
+4. Explain what caused the error and how you fixed it`,
+      },
+      'deploy': {
+        description: 'Deploy application',
+        content: `Deploy project ${args?.projectId || 'unknown'} to production.
+
+Target: ${args?.target || 'all'}
+
+Use the appropriate system tool:
+- system_DEPLOY_FRONTEND for frontend only
+- system_DEPLOY_BACKEND for backend only
+- system_DEPLOY_ALL for full deployment
+
+After deployment, use system_GET_ENVIRONMENT_STATUS to verify.`,
+      },
+    };
+
+    const prompt = prompts[name];
+    if (!prompt) {
+      throw new Error(`Unknown prompt: ${name}`);
+    }
+
+    return {
+      description: prompt.description,
+      messages: [
+        {
+          role: 'user',
+          content: { type: 'text', text: prompt.content },
+        },
+      ],
+    };
   });
 
   return server;
