@@ -10,7 +10,7 @@ import { runCloudFunction } from './utils/parse.js';
 // Tool categories matching the backend AI types
 // Note: 'shared' tools (DECLARE_*_NEED) excluded - they're for internal AI coordination
 // MCP callers have direct access to all underlying tools
-export type ToolCategory = 'project' | 'canvas' | 'server' | 'system' | 'aws' | 'mongodb' | 'agent';
+export type ToolCategory = 'project' | 'canvas' | 'server' | 'system' | 'aws' | 'mongodb' | 'agents';
 
 // OpenAI-style tool definition (matches backend ai-tools/types.ts)
 // Note: additionalProperties is optional - Claude Code has bugs with it set
@@ -26,14 +26,35 @@ interface AITool {
   };
 }
 
+// Categories that require projectId for execution
+const CATEGORIES_REQUIRING_PROJECT_ID: ToolCategory[] = ['canvas', 'server', 'system', 'aws', 'mongodb', 'agents'];
+
 /**
  * Convert an OpenAI-style tool to MCP format
  * Note: We strip additionalProperties to fix Claude Code MCP bug
  * See: https://github.com/anthropics/claude-code/issues/2682
+ *
+ * Also injects projectId parameter for tools that require it.
+ * This enables connected apps - AI can target different projects.
  */
 function convertToMCPTool(tool: AITool, category: ToolCategory): Tool {
   // Clone and strip additionalProperties which causes Claude Code to reject tools
   const { additionalProperties, ...cleanParams } = tool.parameters;
+
+  // Inject projectId for categories that require it
+  if (CATEGORIES_REQUIRING_PROJECT_ID.includes(category)) {
+    cleanParams.properties = {
+      projectId: {
+        type: 'string',
+        description: 'The project ID to execute this tool on. Required. Use project_LIST_PROJECTS to see available projects.',
+      },
+      ...cleanParams.properties,
+    };
+    // Add projectId to required array if not already there
+    if (!cleanParams.required.includes('projectId')) {
+      cleanParams.required = ['projectId', ...cleanParams.required];
+    }
+  }
 
   return {
     name: `${category}_${tool.name}`,
@@ -126,7 +147,7 @@ const categoryToolToCloudFunction: Record<ToolCategory, string> = {
   system: 'executeMCPTool',
   aws: 'executeMCPTool',
   mongodb: 'executeMCPTool',
-  agent: 'executeMCPTool',
+  agents: 'executeMCPTool',
 };
 
 /**
