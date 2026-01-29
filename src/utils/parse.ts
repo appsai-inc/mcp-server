@@ -55,7 +55,8 @@ export async function validateAPIKey(apiKey: string): Promise<{ valid: boolean; 
   initializeParse();
 
   try {
-    const result = await Parse.Cloud.run('validateMCPAPIKey', { apiKey }, { useMasterKey: true }) as {
+    // No useMasterKey - the cloud function handles auth internally
+    const result = await Parse.Cloud.run('validateMCPAPIKey', { apiKey }) as {
       valid: boolean;
       userId?: string;
       error?: string;
