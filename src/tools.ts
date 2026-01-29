@@ -41,15 +41,18 @@ function convertToMCPTool(tool: AITool, category: ToolCategory): Tool {
   // Clone and strip additionalProperties which causes Claude Code to reject tools
   const { additionalProperties, ...cleanParams } = tool.parameters;
 
-  // Inject projectId for categories that require it
+  // Inject projectId for categories that require it (only if not already present)
   if (CATEGORIES_REQUIRING_PROJECT_ID.includes(category)) {
-    cleanParams.properties = {
-      projectId: {
-        type: 'string',
-        description: 'The project ID to execute this tool on. Required. Use project_LIST_PROJECTS to see available projects.',
-      },
-      ...cleanParams.properties,
-    };
+    // Check if projectId already exists in the tool schema (backend may define it)
+    if (!cleanParams.properties.projectId) {
+      cleanParams.properties = {
+        projectId: {
+          type: 'string',
+          description: 'The project ID to execute this tool on. Required. Use project_LIST_PROJECTS to see available projects.',
+        },
+        ...cleanParams.properties,
+      };
+    }
     // Add projectId to required array if not already there
     if (!cleanParams.required.includes('projectId')) {
       cleanParams.required = ['projectId', ...cleanParams.required];
