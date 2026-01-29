@@ -183,27 +183,32 @@ async function createServer() {
     return {
       prompts: [
         {
-          name: 'create-component',
-          description: 'Generate a new React component with best practices',
+          name: 'build-youtube',
+          description: 'Build a YouTube clone with video uploads, playback, and comments',
           arguments: [
-            { name: 'name', description: 'Component name', required: true },
             { name: 'projectId', description: 'Target project ID', required: true },
           ],
         },
         {
-          name: 'fix-error',
-          description: 'Debug and fix an error in your project',
+          name: 'build-slack',
+          description: 'Build a Slack clone with real-time messaging and channels',
           arguments: [
-            { name: 'error', description: 'Error message or description', required: true },
             { name: 'projectId', description: 'Target project ID', required: true },
           ],
         },
         {
-          name: 'deploy',
-          description: 'Deploy your application to production',
+          name: 'build-twitter',
+          description: 'Build a Twitter/X clone with posts, likes, and follows',
           arguments: [
-            { name: 'projectId', description: 'Project to deploy', required: true },
-            { name: 'target', description: 'Deploy target: frontend, backend, or all', required: false },
+            { name: 'projectId', description: 'Target project ID', required: true },
+          ],
+        },
+        {
+          name: 'connect-apps',
+          description: 'Connect two AppsAI projects to share data and functionality',
+          arguments: [
+            { name: 'sourceProjectId', description: 'Source project ID', required: true },
+            { name: 'targetProjectId', description: 'Target project ID', required: true },
           ],
         },
       ],
@@ -215,42 +220,76 @@ async function createServer() {
     const { name, arguments: args } = request.params;
 
     const prompts: Record<string, { description: string; content: string }> = {
-      'create-component': {
-        description: 'Generate a new React component',
-        content: `Create a new React component named "${args?.name || 'Component'}" in project ${args?.projectId || 'unknown'}.
+      'build-youtube': {
+        description: 'Build a YouTube clone',
+        content: `Build a YouTube clone in project ${args?.projectId || 'unknown'}.
 
-Requirements:
-- Use TypeScript with proper types
-- Follow React best practices
-- Include proper exports
-- Add basic styling if appropriate
+Features to implement:
+1. Video upload with S3 storage (use aws_createS3Bucket, aws_uploadFilesToS3)
+2. Video playback page with player component
+3. Video listing/feed with thumbnails
+4. Comments system with MongoDB (use mongodb_createCollection)
+5. Like/dislike functionality
+6. User channels and subscriptions
+7. Search functionality
 
-Use the canvas_SET_RAW_FILE tool to create the component file.`,
+Start by listing current files with canvas_LIST_FILES, then build each feature incrementally.
+Deploy with system_DEPLOY_ALL when ready.`,
       },
-      'fix-error': {
-        description: 'Debug and fix an error',
-        content: `Fix the following error in project ${args?.projectId || 'unknown'}:
+      'build-slack': {
+        description: 'Build a Slack clone',
+        content: `Build a Slack clone in project ${args?.projectId || 'unknown'}.
 
-Error: ${args?.error || 'No error provided'}
+Features to implement:
+1. Real-time messaging with Parse Live Queries
+2. Channels (public and private)
+3. Direct messages between users
+4. Message threads and replies
+5. File sharing with S3 (use aws_createS3Bucket)
+6. User presence (online/offline status)
+7. Message search
+8. Emoji reactions
+
+Set up MongoDB collections for messages, channels, and users.
+Use server_SET_SERVER_FILE for backend real-time logic.
+Deploy with system_DEPLOY_ALL when ready.`,
+      },
+      'build-twitter': {
+        description: 'Build a Twitter/X clone',
+        content: `Build a Twitter/X clone in project ${args?.projectId || 'unknown'}.
+
+Features to implement:
+1. Post tweets (280 char limit)
+2. Image/video uploads to S3
+3. Like and retweet functionality
+4. Follow/unfollow users
+5. User profiles with bio and avatar
+6. Home feed with posts from followed users
+7. Trending topics
+8. Notifications
+
+Set up MongoDB collections for posts, users, follows, likes.
+Build the feed algorithm in server code.
+Deploy with system_DEPLOY_ALL when ready.`,
+      },
+      'connect-apps': {
+        description: 'Connect two AppsAI projects',
+        content: `Connect project ${args?.sourceProjectId || 'source'} to project ${args?.targetProjectId || 'target'}.
+
+This enables:
+1. Shared authentication between apps
+2. Cross-app data access
+3. Unified API endpoints
+4. Shared MongoDB collections
 
 Steps:
-1. Use canvas_LIST_FILES to find relevant files
-2. Use canvas_READ_RAW_FILE to examine the code
-3. Use canvas_SET_RAW_FILE to apply the fix
-4. Explain what caused the error and how you fixed it`,
-      },
-      'deploy': {
-        description: 'Deploy application',
-        content: `Deploy project ${args?.projectId || 'unknown'} to production.
+1. Get details of both projects with project_GET_PROJECT_DETAILS
+2. Set up shared environment variables in both projects
+3. Configure CORS for cross-origin requests
+4. Create shared API endpoints in server code
+5. Deploy both projects
 
-Target: ${args?.target || 'all'}
-
-Use the appropriate system tool:
-- system_DEPLOY_FRONTEND for frontend only
-- system_DEPLOY_BACKEND for backend only
-- system_DEPLOY_ALL for full deployment
-
-After deployment, use system_GET_ENVIRONMENT_STATUS to verify.`,
+Use canvas_SET_ENV_VARIABLE and server_SET_SERVER_ENV_VARIABLE to configure connections.`,
       },
     };
 

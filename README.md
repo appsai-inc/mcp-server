@@ -74,10 +74,11 @@ The server provides project context as MCP resources:
 
 ## Prompts
 
-Built-in prompts for common workflows:
-- `create-component` - Generate a new React component
-- `fix-error` - Debug and fix an error
-- `deploy` - Deploy your application
+Built-in prompts to build full applications:
+- `build-youtube` - Build a YouTube clone with video uploads and comments
+- `build-slack` - Build a Slack clone with real-time messaging
+- `build-twitter` - Build a Twitter/X clone with posts and follows
+- `connect-apps` - Connect two AppsAI projects together
 
 ## Requirements
 
