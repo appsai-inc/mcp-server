@@ -1,0 +1,76 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.appsai/mcp-server",
+  "description": "Build and deploy full-stack Next.js applications through natural language. 98 tools for frontend development, backend APIs, AWS infrastructure, MongoDB, and one-command deployment.",
+  "repository": {
+    "url": "https://github.com/appsai/mcp-server",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@appsai/mcp-server",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "APPSAI_API_KEY",
+          "description": "Your AppsAI API key from Settings → Billing → API Keys",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "project_LIST_PROJECTS",
+      "description": "List all projects owned by or shared with the user"
+    },
+    {
+      "name": "project_CREATE_PROJECT",
+      "description": "Create a new project from a starter template"
+    },
+    {
+      "name": "project_GET_TEMPLATES",
+      "description": "Get available starter templates"
+    },
+    {
+      "name": "canvas_SET_ELEMENT",
+      "description": "Create or modify React components"
+    },
+    {
+      "name": "canvas_GET_ELEMENT_TREE",
+      "description": "Get the component tree for a file"
+    },
+    {
+      "name": "system_DEPLOY_FRONTEND",
+      "description": "Deploy frontend to CloudFront CDN"
+    },
+    {
+      "name": "system_DEPLOY_BACKEND",
+      "description": "Deploy backend to AWS"
+    },
+    {
+      "name": "system_DEPLOY_ALL",
+      "description": "Deploy frontend and backend together"
+    }
+  ],
+  "categories": [
+    "developer-tools",
+    "deployment",
+    "cloud",
+    "database"
+  ],
+  "highlights": [
+    "98 tools across 8 categories",
+    "One-command deployment to AWS",
+    "Full-stack Next.js + Parse Server",
+    "MongoDB Atlas integration",
+    "Pay-as-you-go billing"
+  ]
+}

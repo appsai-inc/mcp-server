@@ -1,0 +1,58 @@
+{
+  "name": "@appsai/mcp-server",
+  "version": "1.0.0",
+  "description": "Official MCP server for AppsAI - connect Claude Code to your AppsAI projects",
+  "mcpName": "com.appsai/mcp-server",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "appsai-mcp": "dist/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.0.1",
+    "parse": "^6.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@types/parse": "^3.0.9",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "server.json",
+    "logo.png"
+  ],
+  "keywords": [
+    "mcp",
+    "appsai",
+    "ai",
+    "llm",
+    "claude",
+    "model-context-protocol",
+    "react",
+    "nextjs",
+    "aws",
+    "mongodb"
+  ],
+  "author": "AppsAI",
+  "license": "MIT",
+  "homepage": "https://appsai.com/docs/mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appsai/mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/appsai/mcp-server/issues"
+  }
+}
