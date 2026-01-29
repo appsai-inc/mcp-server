@@ -28,12 +28,17 @@ interface AITool {
 
 /**
  * Convert an OpenAI-style tool to MCP format
+ * Note: We strip additionalProperties to fix Claude Code MCP bug
+ * See: https://github.com/anthropics/claude-code/issues/2682
  */
 function convertToMCPTool(tool: AITool, category: ToolCategory): Tool {
+  // Clone and strip additionalProperties which causes Claude Code to reject tools
+  const { additionalProperties, ...cleanParams } = tool.parameters;
+
   return {
     name: `${category}_${tool.name}`,
     description: tool.description,
-    inputSchema: tool.parameters as Tool['inputSchema'],
+    inputSchema: cleanParams as Tool['inputSchema'],
   };
 }
 
