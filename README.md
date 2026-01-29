@@ -37,18 +37,17 @@ Add to MCP settings with:
 3. Click **Create API Key**
 4. Copy the key (shown once)
 
-## Tools (98 Total)
+## Tools (90+ Total)
 
 | Category | Tools | Description |
 |----------|-------|-------------|
 | **Project** | 5 | Create, list, and manage projects |
 | **Canvas** | 25 | Edit React components, styles, and assets |
-| **Server** | 6 | Backend Parse Server development |
-| **System** | 5 | Deploy frontend and backend |
-| **AWS** | 23 | CloudFormation, S3, Lambda, and more |
+| **Server** | 6 | Backend Parse Server cloud functions |
+| **System** | 7 | Deploy frontend/backend, connect apps |
+| **AWS** | 23 | CloudFormation, S3, EC2, and more |
 | **MongoDB** | 18 | Database and collection management |
-| **Agent** | 9 | AI prompt management |
-| **Shared** | 7 | Cross-AI communication |
+| **Agents** | 9 | AI prompt management and versioning |
 
 ## Example Usage
 
@@ -57,7 +56,7 @@ Add to MCP settings with:
 → project_LIST_PROJECTS
 
 "Create a new Next.js app"
-→ project_CREATE_PROJECT
+→ project_CREATE_APP
 
 "Show the file tree for project abc123"
 → canvas_LIST_FILES
