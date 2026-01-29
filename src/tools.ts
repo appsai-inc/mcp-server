@@ -8,9 +8,12 @@ import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { runCloudFunction } from './utils/parse.js';
 
 // Tool categories matching the backend AI types
-export type ToolCategory = 'project' | 'canvas' | 'server' | 'system' | 'aws' | 'mongodb' | 'agent' | 'shared';
+// Note: 'shared' tools (DECLARE_*_NEED) excluded - they're for internal AI coordination
+// MCP callers have direct access to all underlying tools
+export type ToolCategory = 'project' | 'canvas' | 'server' | 'system' | 'aws' | 'mongodb' | 'agent';
 
 // OpenAI-style tool definition (matches backend ai-tools/types.ts)
+// Note: additionalProperties is optional - Claude Code has bugs with it set
 interface AITool {
   type: 'function';
   name: string;
@@ -19,7 +22,7 @@ interface AITool {
     type: 'object';
     properties: Record<string, unknown>;
     required: string[];
-    additionalProperties: boolean;
+    additionalProperties?: boolean;
   };
 }
 
@@ -35,6 +38,8 @@ function convertToMCPTool(tool: AITool, category: ToolCategory): Tool {
 }
 
 // Project management tools (new for MCP)
+// Note: Removed additionalProperties to fix Claude Code MCP tool registration bug
+// See: https://github.com/anthropics/claude-code/issues/2682
 const projectTools: AITool[] = [
   {
     type: 'function',
@@ -47,7 +52,6 @@ const projectTools: AITool[] = [
         limit: { type: 'number', description: 'Maximum number of projects to return (default 20)' },
       },
       required: [],
-      additionalProperties: false,
     },
   },
   {
@@ -56,9 +60,10 @@ const projectTools: AITool[] = [
     description: 'Get available starter templates for creating new projects',
     parameters: {
       type: 'object',
-      properties: {},
+      properties: {
+        _placeholder: { type: 'string', description: 'Unused parameter (no parameters required)' },
+      },
       required: [],
-      additionalProperties: false,
     },
   },
   {
@@ -71,7 +76,6 @@ const projectTools: AITool[] = [
         templateS3Key: { type: 'string', description: 'S3 key of the starter template to use' },
       },
       required: ['templateS3Key'],
-      additionalProperties: false,
     },
   },
   {
@@ -84,7 +88,6 @@ const projectTools: AITool[] = [
         projectId: { type: 'string', description: 'The project ID' },
       },
       required: ['projectId'],
-      additionalProperties: false,
     },
   },
   {
@@ -97,7 +100,6 @@ const projectTools: AITool[] = [
         projectId: { type: 'string', description: 'The project ID to delete' },
       },
       required: ['projectId'],
-      additionalProperties: false,
     },
   },
 ];
@@ -120,7 +122,6 @@ const categoryToolToCloudFunction: Record<ToolCategory, string> = {
   aws: 'executeMCPTool',
   mongodb: 'executeMCPTool',
   agent: 'executeMCPTool',
-  shared: 'executeMCPTool',
 };
 
 /**
