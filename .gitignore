@@ -3,3 +3,10 @@ dist/
 .env
 .DS_Store
 *.log
+
+# MCP publisher CLI and keys
+mcp-publisher
+mcp-key.pem
+mcp-key.pub
+*.pem
+*.pub

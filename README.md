@@ -1,124 +1,153 @@
-# AppsAI MCP Server
+# MCP Registry
 
-[![npm version](https://img.shields.io/npm/v/@appsai/mcp-server.svg)](https://www.npmjs.com/package/@appsai/mcp-server)
-[![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io/servers/com.appsai/mcp-server)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+The MCP registry provides MCP clients with a list of MCP servers, like an app store for MCP servers.
 
-<p align="center">
-  <img src="logo.png" alt="AppsAI Logo" width="128" height="128">
-</p>
+[**📤 Publish my MCP server**](docs/modelcontextprotocol-io/quickstart.mdx) | [**⚡️ Live API docs**](https://registry.modelcontextprotocol.io/docs) | [**👀 Ecosystem vision**](docs/design/ecosystem-vision.md) | 📖 **[Full documentation](./docs)**
 
-Build and deploy full-stack Next.js applications through natural language. Connect Claude Code and other MCP-compatible tools to your AppsAI projects.
+## Development Status
 
-## Quick Start
+**2025-10-24 update**: The Registry API has entered an **API freeze (v0.1)** 🎉. For the next month or more, the API will remain stable with no breaking changes, allowing integrators to confidently implement support. This freeze applies to v0.1 while development continues on v0. We'll use this period to validate the API in real-world integrations and gather feedback to shape v1 for general availability. Thank you to everyone for your contributions and patience—your involvement has been key to getting us here!
 
-### 1. Get an API Key
+**2025-09-08 update**: The registry has launched in preview 🎉 ([announcement blog post](https://blog.modelcontextprotocol.io/posts/2025-09-08-mcp-registry-preview/)). While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. A general availability (GA) release will follow later. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions/new?category=ideas) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016) ([joining details here](https://modelcontextprotocol.io/community/communication)).
 
-1. Sign up at [appsai.com](https://appsai.com)
-2. Go to **Settings → Billing → API Keys**
-3. Click **Create Key** and copy it (shown only once)
+Current key maintainers:
+- **Adam Jones** (Anthropic) [@domdomegg](https://github.com/domdomegg)  
+- **Tadas Antanavicius** (PulseMCP) [@tadasant](https://github.com/tadasant)
+- **Toby Padilla** (GitHub) [@toby](https://github.com/toby)
+- **Radoslav (Rado) Dimitrov** (Stacklok) [@rdimitrov](https://github.com/rdimitrov)
 
-### 2. Add to Claude Code
+## Contributing
+
+We use multiple channels for collaboration - see [modelcontextprotocol.io/community/communication](https://modelcontextprotocol.io/community/communication).
+
+Often (but not always) ideas flow through this pipeline:
+
+- **[Discord](https://modelcontextprotocol.io/community/communication)** - Real-time community discussions
+- **[Discussions](https://github.com/modelcontextprotocol/registry/discussions)** - Propose and discuss product/technical requirements
+- **[Issues](https://github.com/modelcontextprotocol/registry/issues)** - Track well-scoped technical work  
+- **[Pull Requests](https://github.com/modelcontextprotocol/registry/pulls)** - Contribute work towards issues
+
+### Quick start:
+
+#### Pre-requisites
+
+- **Docker**
+- **Go 1.24.x**
+- **ko** - Container image builder for Go ([installation instructions](https://ko.build/install/))
+- **golangci-lint v2.4.0**
+
+#### Running the server
 
 ```bash
-claude mcp add appsai --env APPSAI_API_KEY=your_key_here -- npx @appsai/mcp-server
+# Start full development environment
+make dev-compose
 ```
 
-### 3. Start Building
+This starts the registry at [`localhost:8080`](http://localhost:8080) with PostgreSQL. The database uses ephemeral storage and is reset each time you restart the containers, ensuring a clean state for development and testing.
 
-```
-"List my projects"
-"Create a new project using the nextjs-starter template"
-"Show the element tree for app/page.tsx in project abc123"
-"Add a hero section with a gradient background"
-"Deploy the frontend"
-```
+**Note:** The registry uses [ko](https://ko.build) to build container images. The `make dev-compose` command automatically builds the registry image with ko and loads it into your local Docker daemon before starting the services.
 
-## Features
+By default, the registry seeds from the production API with a filtered subset of servers (to keep startup fast). This ensures your local environment mirrors production behavior and all seed data passes validation. For offline development you can seed from a file without validation with `MCP_REGISTRY_SEED_FROM=data/seed.json MCP_REGISTRY_ENABLE_REGISTRY_VALIDATION=false make dev-compose`.
 
-- **98 Tools** across 8 categories for full-stack development
-- **One-command deployment** to AWS CloudFront + Lambda
-- **React/Next.js** frontend development with visual component editing
-- **Parse Server** backend with cloud functions
-- **AWS Infrastructure** via CloudFormation
-- **MongoDB Atlas** database management
-- **Pay-as-you-go** billing using your AppsAI credit balance
+The setup can be configured with environment variables in [docker-compose.yml](./docker-compose.yml) - see [.env.example](./.env.example) for a reference.
 
-## Tool Categories
+<details>
+<summary>Alternative: Running a pre-built Docker image</summary>
 
-| Category | Tools | Description |
-|----------|-------|-------------|
-| **Project** | 5 | Create, list, delete, get project details |
-| **Canvas** | 25 | Frontend React/Next.js development |
-| **Server** | 6 | Backend Parse Server cloud functions |
-| **System** | 5 | Deployment & environment management |
-| **AWS** | 23 | CloudFormation, S3, Lambda, CloudWatch |
-| **MongoDB** | 18 | Clusters, databases, collections, queries |
-| **Agent** | 9 | AI prompt management |
-| **Shared** | 7 | Cross-category communication |
+Pre-built Docker images are automatically published to GitHub Container Registry:
 
-## Example Workflows
+```bash
+# Run latest stable release
+docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:latest
 
-### Create and Deploy a New App
+# Run latest from main branch (continuous deployment)
+docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main
 
-```
-1. "What templates are available?"
-2. "Create a new project using the nextjs-starter template"
-3. "Add a landing page with a hero section and feature grid"
-4. "Deploy the frontend"
+# Run specific release version
+docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:v1.0.0
+
+# Run development build from main branch
+docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main-20250906-abc123d
 ```
 
-### Modify an Existing Project
+**Available tags:** 
+- **Releases**: `latest`, `v1.0.0`, `v1.1.0`, etc.
+- **Continuous**: `main` (latest main branch build)
+- **Development**: `main-<date>-<sha>` (specific commit builds)
+
+</details>
+
+#### Publishing a server
+
+To publish a server, we've built a simple CLI. You can use it with:
+
+```bash
+# Build the latest CLI
+make publisher
+
+# Use it!
+./bin/mcp-publisher --help
+```
+
+See [the publisher guide](./docs/modelcontextprotocol-io/quickstart.mdx) for more details.
+
+#### Other commands
+
+```bash
+# Run lint, unit tests and integration tests
+make check
+```
+
+There are also a few more helpful commands for development. Run `make help` to learn more, or look in [Makefile](./Makefile).
+
+<!--
+For Claude and other AI tools: Always prefer make targets over custom commands where possible.
+-->
+
+## Architecture
+
+### Project Structure
 
 ```
-1. "List my projects"
-2. "Show the files in project happy-purple-fox"
-3. "Update the navbar to include a login button"
-4. "Deploy all"
+├── cmd/                     # Application entry points
+│   └── publisher/           # Server publishing tool
+├── data/                    # Seed data
+├── deploy/                  # Deployment configuration (Pulumi)
+├── docs/                    # Documentation
+├── internal/                # Private application code
+│   ├── api/                 # HTTP handlers and routing
+│   ├── auth/                # Authentication (GitHub OAuth, JWT, namespace blocking)
+│   ├── config/              # Configuration management
+│   ├── database/            # Data persistence (PostgreSQL)
+│   ├── service/             # Business logic
+│   ├── telemetry/           # Metrics and monitoring
+│   └── validators/          # Input validation
+├── pkg/                     # Public packages
+│   ├── api/                 # API types and structures
+│   │   └── v0/              # Version 0 API types
+│   └── model/               # Data models for server.json
+├── scripts/                 # Development and testing scripts
+├── tests/                   # Integration tests
+└── tools/                   # CLI tools and utilities
+    └── validate-*.sh        # Schema validation tools
 ```
 
-### Database Operations
+### Authentication
 
-```
-1. "Create a MongoDB collection called 'users' in project abc123"
-2. "Add an index on the email field"
-3. "Query all users created in the last 7 days"
-```
+Publishing supports multiple authentication methods:
+- **GitHub OAuth** - For publishing by logging into GitHub
+- **GitHub OIDC** - For publishing from GitHub Actions
+- **DNS verification** - For proving ownership of a domain and its subdomains
+- **HTTP verification** - For proving ownership of a domain
 
-## Environment Variables
+The registry validates namespace ownership when publishing. E.g. to publish...:
+- `io.github.domdomegg/my-cool-mcp` you must login to GitHub as `domdomegg`, or be in a GitHub Action on domdomegg's repos
+- `me.adamjones/my-cool-mcp` you must prove ownership of `adamjones.me` via DNS or HTTP challenge
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `APPSAI_API_KEY` | Yes | Your API key from Settings → Billing → API Keys |
+## Community Projects
 
-## Billing
+Check out [community projects](docs/community-projects.md) to explore notable registry-related work created by the community.
 
-Usage is charged to your AppsAI credit balance:
+## More documentation
 
-| Operation | Cost |
-|-----------|------|
-| File read/write | Free |
-| AI generation | Model-based pricing |
-| AWS operations | Based on resources |
-| MongoDB | Based on cluster tier |
-| Deployment | Per deployment |
-
-View usage at [appsai.com/editor/settings](https://appsai.com/editor/settings) → Billing → Credit History.
-
-## Documentation
-
-- [Quick Start Guide](https://appsai.com/docs/mcp/quickstart)
-- [Authentication](https://appsai.com/docs/mcp/authentication)
-- [Tools Reference](https://appsai.com/docs/mcp/tools)
-- [Billing & Usage](https://appsai.com/docs/mcp/billing)
-
-## Links
-
-- [Website](https://appsai.com)
-- [Documentation](https://appsai.com/docs/mcp)
-- [npm Package](https://www.npmjs.com/package/@appsai/mcp-server)
-- [MCP Registry](https://registry.modelcontextprotocol.io/servers/com.appsai/mcp-server)
-
-## License
-
-MIT
+See the [documentation](./docs) for more details if your question has not been answered here!
