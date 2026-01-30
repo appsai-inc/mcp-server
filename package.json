@@ -1,6 +1,6 @@
 {
   "name": "@appsai/mcp-server",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Official MCP server for AppsAI - connect Claude Code to your AppsAI projects",
   "mcpName": "com.appsai/mcp-server",
   "type": "module",

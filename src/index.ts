@@ -3,7 +3,7 @@
  * AppsAI MCP Server
  *
  * Exposes AppsAI tools to LLMs via the Model Context Protocol.
- * Supports all AI tool categories: project, canvas, server, system, aws, mongodb, agent.
+ * Supports all AI tool categories: project, canvas, backend, system, mongodb, agents.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -225,7 +225,7 @@ async function createServer() {
         content: `Build a YouTube clone in project ${args?.projectId || 'unknown'}.
 
 Features to implement:
-1. Video upload with S3 storage (use aws_createS3Bucket, aws_uploadFilesToS3)
+1. Video upload with S3 storage (use backend_createS3Bucket, backend_uploadFilesToS3)
 2. Video playback page with player component
 3. Video listing/feed with thumbnails
 4. Comments system with MongoDB (use mongodb_createCollection)
@@ -245,13 +245,13 @@ Features to implement:
 2. Channels (public and private)
 3. Direct messages between users
 4. Message threads and replies
-5. File sharing with S3 (use aws_createS3Bucket)
+5. File sharing with S3 (use backend_createS3Bucket)
 6. User presence (online/offline status)
 7. Message search
 8. Emoji reactions
 
 Set up MongoDB collections for messages, channels, and users.
-Use server_SET_SERVER_FILE for backend real-time logic.
+Use backend_SET_BACKEND_FILE for backend real-time logic.
 Deploy with system_DEPLOY_ALL when ready.`,
       },
       'build-twitter': {
@@ -269,7 +269,7 @@ Features to implement:
 8. Notifications
 
 Set up MongoDB collections for posts, users, follows, likes.
-Build the feed algorithm in server code.
+Build the feed algorithm in backend code.
 Deploy with system_DEPLOY_ALL when ready.`,
       },
       'connect-apps': {
@@ -286,10 +286,10 @@ Steps:
 1. Get details of both projects with project_GET_PROJECT_DETAILS
 2. Set up shared environment variables in both projects
 3. Configure CORS for cross-origin requests
-4. Create shared API endpoints in server code
+4. Create shared API endpoints in backend code
 5. Deploy both projects
 
-Use canvas_SET_ENV_VARIABLE and server_SET_SERVER_ENV_VARIABLE to configure connections.`,
+Use canvas_SET_ENV_VARIABLE and backend_SET_BACKEND_ENV_VARIABLE to configure connections.`,
       },
     };
 

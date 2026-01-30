@@ -13,10 +13,10 @@ import { runCloudFunction } from './utils/parse.js';
 
 /**
  * Tool categories matching the backend.
- * - AI Types: canvas, server, aws, mongodb, agents
+ * - AI Types: canvas, backend, mongodb, agents
  * - Shared Tools: project, system (available to all AIs)
  */
-export type ToolCategory = 'project' | 'canvas' | 'server' | 'system' | 'aws' | 'mongodb' | 'agents';
+export type ToolCategory = 'project' | 'canvas' | 'backend' | 'system' | 'mongodb' | 'agents';
 
 // OpenAI-style tool definition (matches backend ai-tools/types.ts)
 interface AITool {
@@ -32,7 +32,7 @@ interface AITool {
 }
 
 // Categories that require projectId for execution
-const CATEGORIES_REQUIRING_PROJECT_ID: ToolCategory[] = ['canvas', 'server', 'system', 'aws', 'mongodb', 'agents'];
+const CATEGORIES_REQUIRING_PROJECT_ID: ToolCategory[] = ['canvas', 'backend', 'system', 'mongodb', 'agents'];
 
 /**
  * Convert an OpenAI-style tool to MCP format

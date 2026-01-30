@@ -43,9 +43,8 @@ Add to MCP settings with:
 |----------|-------|-------------|
 | **Project** | 5 | Create, list, and manage projects |
 | **Canvas** | 25 | Edit React components, styles, and assets |
-| **Server** | 6 | Backend Parse Server cloud functions |
+| **Backend** | 18 | Backend code, S3, CloudFormation, and AWS infrastructure |
 | **System** | 7 | Deploy frontend/backend, connect apps |
-| **AWS** | 23 | CloudFormation, S3, EC2, and more |
 | **MongoDB** | 18 | Database and collection management |
 | **Agents** | 9 | AI prompt management and versioning |
 
