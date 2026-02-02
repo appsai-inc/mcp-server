@@ -143,7 +143,7 @@ async function createServer() {
       const userId = await ensureAuthenticated();
 
       if (uri === 'appsai://projects') {
-        const result = await executeToolCall('project_LIST_PROJECTS', {}, userId);
+        const result = await executeToolCall('project_LIST_APPS', {}, userId);
         return {
           contents: [
             {
@@ -159,7 +159,7 @@ async function createServer() {
       const projectMatch = uri.match(/^appsai:\/\/project\/(.+)$/);
       if (projectMatch) {
         const projectId = projectMatch[1];
-        const result = await executeToolCall('project_GET_PROJECT_DETAILS', { projectId }, userId);
+        const result = await executeToolCall('project_GET_APP_DETAILS', { projectId }, userId);
         return {
           contents: [
             {
@@ -283,7 +283,7 @@ This enables:
 4. Shared MongoDB collections
 
 Steps:
-1. Get details of both projects with project_GET_PROJECT_DETAILS
+1. Get details of both apps with project_GET_APP_DETAILS
 2. Set up shared environment variables in both projects
 3. Configure CORS for cross-origin requests
 4. Create shared API endpoints in backend code

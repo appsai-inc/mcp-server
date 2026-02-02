@@ -1,6 +1,12 @@
 # AppsAI MCP Server
 
-Build and deploy full-stack Next.js apps with AI. This MCP server connects Claude Code, Cursor, Windsurf, and other AI tools to your AppsAI projects.
+Build and deploy full-stack apps with AI. This MCP server connects Claude Code, Cursor, Windsurf, and other AI tools to your AppsAI projects.
+
+**Supported stacks:**
+- **Frontend:** Next.js with React, Tailwind CSS, and shadcn/ui
+- **Backend:** Parse Server, Express, Fastify, Hono, Supabase Edge Functions, Firebase Cloud Functions, Serverless Framework, or custom
+- **Database:** MongoDB Atlas (managed)
+- **Infrastructure:** AWS (S3, CloudFormation, EC2, Lambda, and more)
 
 ## Installation
 
@@ -37,22 +43,38 @@ Add to MCP settings with:
 3. Click **Create API Key**
 4. Copy the key (shown once)
 
-## Tools (90+ Total)
+## Tools (95+ Total)
 
 | Category | Tools | Description |
 |----------|-------|-------------|
 | **Project** | 5 | Create, list, and manage projects |
 | **Canvas** | 25 | Edit React components, styles, and assets |
 | **Backend** | 18 | Backend code, S3, CloudFormation, and AWS infrastructure |
-| **System** | 7 | Deploy frontend/backend, connect apps |
+| **System** | 11 | Deploy frontend/backend, connect apps, manage MCP servers |
 | **MongoDB** | 18 | Database and collection management |
 | **Agents** | 9 | AI prompt management and versioning |
+
+### System Tools
+
+| Tool | Description |
+|------|-------------|
+| `system_DEPLOY_BACKEND` | Deploy backend infrastructure |
+| `system_DEPLOY_FRONTEND` | Deploy frontend to CDN |
+| `system_DEPLOY_ALL` | Deploy both frontend and backend |
+| `system_GET_ENVIRONMENT_STATUS` | Get deployment status and URLs |
+| `system_GET_DEPLOY_ARTIFACTS` | Get deployment artifacts and history |
+| `system_CONNECT_APP` | Connect two projects for cross-app operations |
+| `system_DISCONNECT_APP` | Remove connection between projects |
+| `system_ADD_MCP_SERVER` | Add an external MCP server to a project |
+| `system_LIST_MCP_SERVERS` | List configured MCP servers |
+| `system_UPDATE_MCP_SERVER` | Update MCP server configuration |
+| `system_REMOVE_MCP_SERVER` | Remove an MCP server from project |
 
 ## Example Usage
 
 ```
-"List my projects"
-→ project_LIST_PROJECTS
+"List my apps"
+→ project_LIST_APPS
 
 "Create a new Next.js app"
 → project_CREATE_APP
@@ -62,7 +84,27 @@ Add to MCP settings with:
 
 "Deploy the frontend"
 → system_DEPLOY_FRONTEND
+
+"Add an MCP server to my project"
+→ system_ADD_MCP_SERVER
 ```
+
+## MCP Server Integration
+
+AppsAI projects can connect to external MCP servers, giving your AI agents access to additional tools:
+
+```
+"Add the Stripe MCP server to my project"
+→ system_ADD_MCP_SERVER with serverUrl and serverLabel
+
+"List my configured MCP servers"
+→ system_LIST_MCP_SERVERS
+
+"Disable the Stripe MCP server"
+→ system_UPDATE_MCP_SERVER with enabled: false
+```
+
+Once configured, AI agents in your AppsAI project can use tools from connected MCP servers.
 
 ## Resources
 

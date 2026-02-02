@@ -50,7 +50,7 @@ function convertToMCPTool(tool: AITool, category: ToolCategory): Tool {
       cleanParams.properties = {
         projectId: {
           type: 'string',
-          description: 'The project ID to execute this tool on. Required. Use project_LIST_PROJECTS to see available projects.',
+          description: 'The project ID to execute this tool on. Required. Use project_LIST_APPS to see available apps.',
         },
         ...cleanParams.properties,
       };

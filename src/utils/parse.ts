@@ -39,7 +39,9 @@ export async function runCloudFunction<T = unknown>(
 ): Promise<T> {
   initializeParse();
 
-  const options: Parse.Cloud.RunOptions = {};
+  const options: Parse.Cloud.RunOptions = {
+    useMasterKey: true,
+  };
 
   if (sessionToken) {
     options.sessionToken = sessionToken;
