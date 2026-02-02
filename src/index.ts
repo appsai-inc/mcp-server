@@ -122,9 +122,9 @@ async function createServer() {
       return {
         resources: [
           {
-            uri: 'appsai://projects',
-            name: 'Projects',
-            description: 'List of your AppsAI projects',
+            uri: 'appsai://apps',
+            name: 'Apps',
+            description: 'List of your AppsAI apps',
             mimeType: 'application/json',
           },
         ],
@@ -142,7 +142,7 @@ async function createServer() {
     try {
       const userId = await ensureAuthenticated();
 
-      if (uri === 'appsai://projects') {
+      if (uri === 'appsai://apps') {
         const result = await executeToolCall('project_LIST_APPS', {}, userId);
         return {
           contents: [
@@ -155,8 +155,8 @@ async function createServer() {
         };
       }
 
-      // Handle appsai://project/{id}
-      const projectMatch = uri.match(/^appsai:\/\/project\/(.+)$/);
+      // Handle appsai://app/{id}
+      const projectMatch = uri.match(/^appsai:\/\/app\/(.+)$/);
       if (projectMatch) {
         const projectId = projectMatch[1];
         const result = await executeToolCall('project_GET_APP_DETAILS', { projectId }, userId);
@@ -205,7 +205,7 @@ async function createServer() {
         },
         {
           name: 'connect-apps',
-          description: 'Connect two AppsAI projects to share data and functionality',
+          description: 'Connect two AppsAI apps to share data and functionality',
           arguments: [
             { name: 'sourceProjectId', description: 'Source project ID', required: true },
             { name: 'targetProjectId', description: 'Target project ID', required: true },
@@ -273,8 +273,8 @@ Build the feed algorithm in backend code.
 Deploy with system_DEPLOY_ALL when ready.`,
       },
       'connect-apps': {
-        description: 'Connect two AppsAI projects',
-        content: `Connect project ${args?.sourceProjectId || 'source'} to project ${args?.targetProjectId || 'target'}.
+        description: 'Connect two AppsAI apps',
+        content: `Connect app ${args?.sourceProjectId || 'source'} to app ${args?.targetProjectId || 'target'}.
 
 This enables:
 1. Shared authentication between apps

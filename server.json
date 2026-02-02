@@ -6,13 +6,13 @@
     "url": "https://github.com/appsai-inc/mcp-server",
     "source": "github"
   },
-  "version": "1.0.11",
+  "version": "1.0.12",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@appsai/mcp-server",
-      "version": "1.0.11",
+      "version": "1.0.12",
       "transport": {
         "type": "stdio"
       },

@@ -16,14 +16,9 @@ export function initializeParse() {
 
   const serverUrl = process.env.PARSE_SERVER_URL || 'https://internal.appsai.com/server';
   const appId = process.env.PARSE_APP_ID || 'Rv4CcqHMjTcjAzSDb6vVMnw0Yp99ZQ5Wrvh80PUI';
-  const masterKey = process.env.PARSE_MASTER_KEY;
 
   Parse.initialize(appId);
   Parse.serverURL = serverUrl;
-
-  if (masterKey) {
-    Parse.masterKey = masterKey;
-  }
 
   initialized = true;
   console.error(`[Parse] Initialized with server: ${serverUrl}`);
@@ -39,9 +34,7 @@ export async function runCloudFunction<T = unknown>(
 ): Promise<T> {
   initializeParse();
 
-  const options: Parse.Cloud.RunOptions = {
-    useMasterKey: true,
-  };
+  const options: Parse.Cloud.RunOptions = {};
 
   if (sessionToken) {
     options.sessionToken = sessionToken;
