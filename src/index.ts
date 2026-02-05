@@ -211,6 +211,13 @@ async function createServer() {
             { name: 'targetProjectId', description: 'Target project ID', required: true },
           ],
         },
+        {
+          name: 'connect-postsbot',
+          description: 'Connect AppsAI project to Posts.bot for automatic social media updates',
+          arguments: [
+            { name: 'projectId', description: 'AppsAI project ID to connect', required: true },
+          ],
+        },
       ],
     };
   });
@@ -290,6 +297,42 @@ Steps:
 5. Deploy both projects
 
 Use canvas_SET_ENV_VARIABLE and backend_SET_BACKEND_ENV_VARIABLE to configure connections.`,
+      },
+      'connect-postsbot': {
+        description: 'Connect to Posts.bot for auto social media updates',
+        content: `Connect AppsAI project ${args?.projectId || 'unknown'} to Posts.bot for automatic social media posting.
+
+When connected, Posts.bot will automatically generate draft social media posts when you:
+- Create or update files in your project
+- Successfully deploy your frontend or backend
+
+Steps:
+1. Create an Integration API key for Posts.bot:
+   apikey_CREATE_API_KEY with:
+   - name: "Posts.bot Integration"
+   - preset: "integration"
+   - expiresIn: null (no expiration)
+
+2. Copy the returned API key (shown only once!)
+
+3. In Posts.bot:
+   - Connect your AppsAI account with this API key
+   - Create or select a business
+   - Link this project (${args?.projectId || 'projectId'}) to the business
+   - Enable auto-posting
+
+4. From now on, when you make changes and deploy, Posts.bot will:
+   - Receive webhook notifications
+   - Generate AI-powered social media posts about your updates
+   - Queue them for your review before publishing
+
+The Integration API key has these scopes:
+- projects:read - List and view your projects
+- projects:codebase - Download project code (for context)
+- webhooks:manage - Register/unregister webhooks
+- user:profile - Access your basic profile
+
+This is secure - Posts.bot cannot modify your AppsAI project, only read info and receive change notifications.`,
       },
     };
 
